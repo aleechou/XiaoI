@@ -26,7 +26,7 @@ xiaoi.connect (err,client)->
         if data
             client.send data, (err,reply)->
                 if err
-                    console.error err
+                    console.error err.stack
                 else if reply and reply.body
                     console.log 
                     process.stdout.write termcss.compile('小I say {prompt} {sentence}',style) ({
