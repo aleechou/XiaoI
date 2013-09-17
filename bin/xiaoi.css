@@ -1,0 +1,12 @@
+title {
+    font-weight: bold;
+}
+
+author {
+    color: cyan;
+    font-style: italic
+}
+
+prompt {
+    color: magenta
+}
