@@ -19,7 +19,6 @@
         "url": "https://github.com/aleechou/XiaoI/issues"
     },
     "dependencies": {
-        "term-css": "1.0.0",
-        "coffeescript": "1.6.3"
+        "term-css": "1.0.0"
     }
 }
