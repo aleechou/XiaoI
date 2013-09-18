@@ -1,26 +1,27 @@
 node.js 的小I机器人客户端
 ===
 
-# Usage
+## Usage
 
-## In command line terminate
-```
-npm i xiaoi -g
-xiaoi
-```
+* In command line terminate
 
-## In your node project
+  ```
+  npm i xiaoi -g
+  xiaoi
+  ```
 
-```javascript
-var xiaoi = require('xiaoi') ;
+* In your node project
 
-// connect to xiaoi.com
-xiaoi.connect(function(error,client){
+    ```javascript
+    var xiaoi = require('xiaoi') ;
+
+    // connect to xiaoi.com
+    xiaoi.connect(function(error,client){
 
     // send words and waiting for reply
     client.send("hello robot",function(error,reply){
-        console.log ('xiaoi say:', replay.body.content) ;
+    console.log ('xiaoi say:', replay.body.content) ;
     }) ;
 
-}) ;
-```
+    }) ;
+    ```
