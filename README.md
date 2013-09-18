@@ -1,15 +1,15 @@
 node.js 的小I机器人客户端
 ===
 
-= Usage =
+# Usage
 
-== In command line terminate ==
+## In command line terminate
 ```
 npm i xiaoi -g
 xiaoi
 ```
 
-== In your node project ==
+## In your node project
 
 ```javascript
 var xiaoi = require('xiaoi') ;
