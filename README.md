@@ -18,10 +18,10 @@ node.js 的小I机器人客户端
     // connect to xiaoi.com
     xiaoi.connect(function(error,client){
 
-    // send words and waiting for reply
-    client.send("hello robot",function(error,reply){
-    console.log ('xiaoi say:', replay.body.content) ;
-    }) ;
+        // send words and waiting for reply
+        client.send("hello robot",function(error,reply){
+            console.log ('xiaoi say:', replay.body.content) ;
+        }) ;
 
     }) ;
     ```
