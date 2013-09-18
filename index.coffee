@@ -40,7 +40,30 @@ exports.connect = (cb) ->
 exports.XiaoI = class
     robotid: 'webbot'
     httpUserAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.65'
+    xisessionid: undefined
     constructor: (@sessionid,@uid) ->
+
+        # 60秒发个心跳包
+        setInterval @keeplive.bind(this), 1000*60
+
+    keeplive: ->
+
+        process.stdout.write '.'
+
+        req = http.get
+            hostname: 'i.xiaoi.com'
+            path: "/robot/webrobot?callback=__webrobot_processMsg&data=%7B%22type%22%3A%22keepalive%22%7D&ts=#{(new Date).getTime()}"
+            , (res) =>
+                res.on 'end', =>
+                    cookies = parseCookies res.headers['set-cookie']
+                    return if not cookies.XISESSIONID
+                    if @xisessionid!=cookies.XISESSIONID
+                        console.log "\nxiao server change session:", @xisessionid, ' -> ', cookies.XISESSIONID
+                        @xisessionid = cookies.XISESSIONID
+
+        req.on 'error', (error) ->
+            console.log error
+
     send: (sentence,cb) ->
         data =
             "sessionId":@sessionid
