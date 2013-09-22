@@ -1,0 +1,10 @@
+
+* 0.0.3 / 2013.9.22
+
+** fixed: catch connection exception
+** fixed: can not emit data event of process.stdin on mac osx
+** fixed: keeplive missing cookies
+** fixed: can not emit 'data' event of process.stdin on mac osx
+** fixed: keeplive missing cookies
+
+

@@ -13,13 +13,15 @@ do console.log
 
 xiaoi.connect (err,client)->
 
+    listening = false
+
     if err
         console.log "can not connect to i.xiaoi.com, #{ err.toString() }"
         return ;
 
+    do process.stdin.resume
     process.stdin.on 'data', (data)->
-
-        if not listening then return
+        return if not listening
 
         data = data.toString()
 
@@ -28,7 +30,6 @@ xiaoi.connect (err,client)->
                 if err
                     console.error err.stack
                 else if reply and reply.body
-                    console.log 
                     process.stdout.write termcss.compile('小I say {prompt} {sentence}',style) ({
                             prompt:'>'
                             sentence: reply.body.content
@@ -38,9 +39,6 @@ xiaoi.connect (err,client)->
         else
             listen()
 
-
-
-    listening = false ;
     listen = ->
         listening = true ;
         process.stdout.write termcss.compile('you say {prompt} ',style) (prompt:'>')
