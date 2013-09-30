@@ -24,63 +24,59 @@
     return ret;
   };
 
-  exports.connect = function(cb) {
-    var error, req;
-
-    try {
-      req = http.get({
-        hostname: 'i.xiaoi.com',
-        path: "/robot/webrobot?data=%7B%22type%22%3A%22open%22%7D&callback=__webrobot__processOpenResponse&ts=" + ((new Date).getTime())
-      }, function(res) {
-        var content;
-
-        content = '';
-        res.on('data', function(chunk) {
-          return content += chunk;
-        });
-        return res.on('end', function() {
-          var cookies, error, __webrobot__processOpenResponse;
-
-          cookies = parseCookies(res.headers['set-cookie']);
-          try {
-            __webrobot__processOpenResponse = function(rspn) {
-              var client;
-
-              client = new exports.XiaoI(rspn.sessionId, rspn.userId);
-              client.nonce = cookies.nonce;
-              client.xisessionid = cookies.XISESSIONID;
-              console.log('got nonce & XISESSIONID:', client.nonce, client.xisessionid);
-              return cb(null, client);
-            };
-            return eval(content);
-          } catch (_error) {
-            error = _error;
-            return cb(error);
-          }
-        });
-      });
-    } catch (_error) {
-      error = _error;
-      cb(error);
-      void 0;
-    }
-    return req.on('err', function(err) {
-      return cb(err);
-    });
-  };
-
   exports.XiaoI = (function() {
+    function _Class() {}
+
     _Class.prototype.robotid = 'webbot';
 
     _Class.prototype.httpUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.65';
 
     _Class.prototype.xisessionid = void 0;
 
-    function _Class(sessionid, uid) {
-      this.sessionid = sessionid;
-      this.uid = uid;
-      setInterval(this.keeplive.bind(this), 1000 * 60);
-    }
+    _Class.prototype.connect = function(cb) {
+      var error, req,
+        _this = this;
+
+      try {
+        req = http.get({
+          hostname: 'i.xiaoi.com',
+          path: "/robot/webrobot?data=%7B%22type%22%3A%22open%22%7D&callback=__webrobot__processOpenResponse&ts=" + ((new Date).getTime())
+        }, function(res) {
+          var content;
+
+          content = '';
+          res.on('data', function(chunk) {
+            return content += chunk;
+          });
+          return res.on('end', function() {
+            var cookies, error, __webrobot__processOpenResponse;
+
+            cookies = parseCookies(res.headers['set-cookie']);
+            try {
+              __webrobot__processOpenResponse = function(rspn) {
+                _this.sessionid = rspn.sessionId;
+                _this.userId = rspn.userId;
+                _this.nonce = cookies.nonce;
+                _this.xisessionid = cookies.XISESSIONID;
+                console.log('got nonce & XISESSIONID:', _this.nonce, _this.xisessionid);
+                return cb(null, _this);
+              };
+              return eval(content);
+            } catch (_error) {
+              error = _error;
+              return cb(error);
+            }
+          });
+        });
+      } catch (_error) {
+        error = _error;
+        cb(error);
+        void 0;
+      }
+      return req.on('err', function(err) {
+        return cb(err);
+      });
+    };
 
     _Class.prototype.keeplive = function() {
       var cookieline, nonce, req,
@@ -99,16 +95,20 @@
           var cookies;
 
           cookies = parseCookies(res.headers['set-cookie']);
-          if (cookies.XISESSIONID && _this.xisessionid !== cookies.XISESSIONID) {
-            console.log("\nxiao server change session:", _this.xisessionid, ' -> ', cookies.XISESSIONID);
-            return _this.xisessionid = cookies.XISESSIONID;
+          if (cookies.XISESSIONID) {
+            if (_this.xisessionid !== cookies.XISESSIONID) {
+              console.log("\nxiao server change session:", _this.xisessionid, ' -> ', cookies.XISESSIONID, ' time:', (new Date).toISOString());
+              return _this.xisessionid = cookies.XISESSIONID;
+            } else {
+              return process.stdout.write('-');
+            }
           } else {
             return process.stdout.write('.');
           }
         });
       });
       return req.on('error', function(error) {
-        return console.log(error);
+        return console.log('keeplive', error);
       });
     };
 

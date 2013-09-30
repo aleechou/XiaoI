@@ -10,46 +10,48 @@ parseCookies = (cookies) ->
             ret[r[1]] = r[2]
     ret
 
-exports.connect = (cb) ->
-
-    try
-        req = http.get
-            hostname: 'i.xiaoi.com'
-            path: "/robot/webrobot?data=%7B%22type%22%3A%22open%22%7D&callback=__webrobot__processOpenResponse&ts=#{(new Date).getTime()}"
-
-            , (res)->
-                content = ''
-                res.on 'data', (chunk) ->
-                    content+= chunk
-                res.on 'end', ->
-                    cookies = parseCookies res.headers['set-cookie']
-
-                    try
-                        __webrobot__processOpenResponse = (rspn)->
-                            client =  new exports.XiaoI rspn.sessionId, rspn.userId
-                            client.nonce = cookies.nonce
-                            client.xisessionid = cookies.XISESSIONID
-                            console.log 'got nonce & XISESSIONID:', client.nonce, client.xisessionid
-                            cb null, client
-                        eval content
-                    catch error
-                        cb error
-    catch error
-        cb error
-        undefined
-
-    req.on 'err', (err)->
-        cb err
 
 
-exports.XiaoI = class
+module.exports = class
     robotid: 'webbot'
     httpUserAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.65'
     xisessionid: undefined
-    constructor: (@sessionid,@uid) ->
 
-        # 60秒发个心跳包
-        setInterval @keeplive.bind(this), 1000*60
+    constructor : ->
+        # 每隔 15分钟 更新会话
+        setInterval @connect.bind(this), 15*60*1000
+
+    connect: (cb)->
+
+        try
+            req = http.get
+                hostname: 'i.xiaoi.com'
+                path: "/robot/webrobot?data=%7B%22type%22%3A%22open%22%7D&callback=__webrobot__processOpenResponse&ts=#{(new Date).getTime()}"
+
+                , (res)=>
+                    content = ''
+                    res.on 'data', (chunk) ->
+                        content+= chunk
+                    res.on 'end', =>
+                        cookies = parseCookies res.headers['set-cookie']
+                        @nonce = cookies.nonce
+                        @xisessionid = cookies.XISESSIONID
+
+                        try
+                            __webrobot__processOpenResponse = (rspn)=>
+                                @sessionid = rspn.sessionId
+                                @userId = rspn.userId
+                                console.log 'got nonce & XISESSIONID:', @nonce, @xisessionid
+                                cb null, this
+                            eval content
+                        catch error
+                            cb error
+        catch error
+            cb error
+            undefined
+
+        req.on 'err', (err)->
+            cb err
 
     keeplive: ->
 
@@ -63,14 +65,17 @@ exports.XiaoI = class
             , (res) =>
                 res.on 'end', =>
                     cookies = parseCookies res.headers['set-cookie']
-                    if cookies.XISESSIONID and @xisessionid!=cookies.XISESSIONID
-                        console.log "\nxiao server change session:", @xisessionid, ' -> ', cookies.XISESSIONID
-                        @xisessionid = cookies.XISESSIONID
+                    if cookies.XISESSIONID
+                        if @xisessionid!=cookies.XISESSIONID
+                            console.log "\nxiao server change session:", @xisessionid, ' -> ', cookies.XISESSIONID, ' time:', (new Date).toISOString()
+                            @xisessionid = cookies.XISESSIONID
+                        else
+                            process.stdout.write '-'
                     else
                         process.stdout.write '.'
 
         req.on 'error', (error) ->
-            console.log error
+            console.log 'keeplive', error
 
     send: (sentence,cb) ->
         data =
