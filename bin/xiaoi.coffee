@@ -1,5 +1,5 @@
 #! /usr/bin/env coffee
-xiaoi = require '../index.coffee'
+Xiaoi = require '../index.coffee'
 termcss = require 'term-css'
 
 fs = require('fs')
@@ -11,7 +11,9 @@ console.log ( termcss.compile('        crack by {author}',style) (author:'alee')
 do console.log
 
 
-xiaoi.connect (err,client)->
+client = new Xiaoi
+
+client.connect (err)->
 
     listening = false
 
@@ -23,9 +25,12 @@ xiaoi.connect (err,client)->
     process.stdin.on 'data', (data)->
         return if not listening
 
-        data = data.toString()
+        data = data.toString().trim()
 
-        if data
+        if data=='reconnect'
+            client.connect (err)->
+                console.log err if err
+        else if data
             client.send data, (err,reply)->
                 if err
                     console.error err.stack
