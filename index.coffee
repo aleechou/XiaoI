@@ -19,7 +19,10 @@ module.exports = class
 
     constructor : ->
         # 每隔 15分钟 更新会话
-        setInterval @connect.bind(this), 15*60*1000
+        setInterval =>
+                @connect (err)->
+                    console.log err if err
+            , 15*60*1000
 
     connect: (cb)->
 

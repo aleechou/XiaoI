@@ -32,7 +32,15 @@
     _Class.prototype.xisessionid = void 0;
 
     function _Class() {
-      setInterval(this.connect.bind(this), 15 * 60 * 1000);
+      var _this = this;
+
+      setInterval(function() {
+        return _this.connect(function(err) {
+          if (err) {
+            return console.log(err);
+          }
+        });
+      }, 15 * 60 * 1000);
     }
 
     _Class.prototype.connect = function(cb) {
