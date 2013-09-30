@@ -13,10 +13,11 @@ node.js 的小I机器人客户端
 * In your node project
 
     ```javascript
-    var xiaoi = require('xiaoi') ;
+    var XiaoI = require('xiaoi') ;
+    client = XiaoI
 
     // connect to xiaoi.com
-    xiaoi.connect(function(error,client){
+    client.connect(function(error){
 
         // send words and waiting for reply
         client.send("hello robot",function(error,reply){
