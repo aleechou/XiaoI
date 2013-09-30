@@ -1,6 +1,6 @@
 {
     "name": "xiaoi",
-    "version": "0.1",
+    "version": "0.1.0",
     "description": "A xiaoi.com client for Node.js",
     "main": "index.js",
     "scripts": {
