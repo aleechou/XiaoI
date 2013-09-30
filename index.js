@@ -24,14 +24,16 @@
     return ret;
   };
 
-  exports.XiaoI = (function() {
-    function _Class() {}
-
+  module.exports = (function() {
     _Class.prototype.robotid = 'webbot';
 
     _Class.prototype.httpUserAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.65';
 
     _Class.prototype.xisessionid = void 0;
+
+    function _Class() {
+      setInterval(this.connect.bind(this), 15 * 60 * 1000);
+    }
 
     _Class.prototype.connect = function(cb) {
       var error, req,
@@ -52,12 +54,12 @@
             var cookies, error, __webrobot__processOpenResponse;
 
             cookies = parseCookies(res.headers['set-cookie']);
+            _this.nonce = cookies.nonce;
+            _this.xisessionid = cookies.XISESSIONID;
             try {
               __webrobot__processOpenResponse = function(rspn) {
                 _this.sessionid = rspn.sessionId;
                 _this.userId = rspn.userId;
-                _this.nonce = cookies.nonce;
-                _this.xisessionid = cookies.XISESSIONID;
                 console.log('got nonce & XISESSIONID:', _this.nonce, _this.xisessionid);
                 return cb(null, _this);
               };
