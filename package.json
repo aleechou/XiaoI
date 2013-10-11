@@ -1,6 +1,6 @@
 {
     "name": "xiaoi",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "A xiaoi.com client for Node.js",
     "main": "index.js",
     "scripts": {
@@ -11,7 +11,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/aleechou/XiaoI.git#v0.1.1"
+        "url": "git://github.com/aleechou/XiaoI.git#v0.1.2"
     },
     "author": "aleechou",
     "license": "MIT",
