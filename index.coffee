@@ -42,16 +42,16 @@ module.exports = class
                                 @sessionid = rspn.sessionId
                                 @userId = rspn.userId
                                 console.log 'got nonce & XISESSIONID:', @nonce, @xisessionid
-                                cb null, this
+                                cb && cb null, this
                             eval content
                         catch error
-                            cb error
+                            cb && cb error
         catch error
-            cb error
+            cb && cb error
             undefined
 
-        req.on 'err', (err)->
-            cb err
+        req.on 'error', (err)->
+            cb && cb err
 
     keeplive: ->
 

@@ -61,22 +61,22 @@
                 _this.sessionid = rspn.sessionId;
                 _this.userId = rspn.userId;
                 console.log('got nonce & XISESSIONID:', _this.nonce, _this.xisessionid);
-                return cb(null, _this);
+                return cb && cb(null, _this);
               };
               return eval(content);
             } catch (_error) {
               error = _error;
-              return cb(error);
+              return cb && cb(error);
             }
           });
         });
       } catch (_error) {
         error = _error;
-        cb(error);
+        cb && cb(error);
         void 0;
       }
-      return req.on('err', function(err) {
-        return cb(err);
+      return req.on('error', function(err) {
+        return cb && cb(err);
       });
     };
 
